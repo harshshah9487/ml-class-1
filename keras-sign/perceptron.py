@@ -18,6 +18,8 @@ config.epochs = 10
 (X_test, y_test) = signdata.load_test_data()
 (X_train, y_train) = signdata.load_train_data()
 
+
+
 img_width = X_test.shape[1]
 img_height = X_test.shape[2]
 
@@ -35,11 +37,23 @@ X_test = X_test.astype('float32') / 255.
 
 # create model
 model = Sequential()
-model.add(Flatten(input_shape=(img_width, img_height)))
+model.add(Reshape((img_width, img_height,1), input_shape=(img_width, img_height)))
+model.add(Conv2D(32, (3,3), padding='valid' , activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Dropout(0.35))
+model.add(Conv2D(96, (3,3), padding='valid',activation="relu"))
+model.add(MaxPooling2D(pool_size=(2,2)))
+model.add(Dropout(0.35))
+model.add(Flatten())
+model.add(Dropout(0.35))
+model.add(Dense(100, activation="relu"))
+model.add(Dropout(0.35))
+model.add(Dense(50, activation="relu"))
+model.add(Dropout(0.30))
 model.add(Dense(num_classes, activation="softmax"))
 model.compile(loss=config.loss, optimizer=config.optimizer,
               metrics=['accuracy'])
 
 # Fit the model
-model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test),
+model.fit(X_train, y_train, epochs=18, validation_data=(X_test, y_test),
           callbacks=[WandbCallback(data_type="image", labels=signdata.letters)])
