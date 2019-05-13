@@ -16,14 +16,14 @@ wandb.init()
 config = wandb.config
 
 # set parameters:
-config.vocab_size = 1500
+config.vocab_size = 2000
 config.maxlen = 400
 config.batch_size = 32
-config.embedding_dims = 50
+config.embedding_dims = 75
 config.filters = 250
 config.kernel_size = 3
 config.hidden_dims = 100
-config.epochs = 10
+config.epochs = 13
 
 (X_train, y_train), (X_test, y_test) = imdb.load_imdb()
 #print("Before:", X_train[0])
@@ -45,13 +45,15 @@ model.add(Dropout(0.35))
 model.add(Conv1D(config.filters, config.kernel_size, activation="relu"))
 model.add(MaxPooling1D(pool_size=2))
 model.add(Dropout(0.3))
-model.add(GRU(35, return_sequences=True))#, recurrent_dropout=0.25))
-model.add(GRU(25, return_sequences=True))#, recurrent_dropout=0.25))
+model.add(GRU(50, return_sequences=True))#, recurrent_dropout=0.25))
+#model.add(GRU(25, return_sequences=True))#, recurrent_dropout=0.25))
 
 model.add(Flatten())
 
 model.add(Dropout(0.3))
-model.add(Dense(50, activation='relu'))
+model.add(Dense(100, activation='relu'))
+model.add(Dropout(0.3))
+model.add(Dense(30, activation='relu'))
 model.add(Dropout(0.3))
 
 model.add(Dense(1, activation='sigmoid'))
