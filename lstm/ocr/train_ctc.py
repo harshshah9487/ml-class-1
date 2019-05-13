@@ -44,7 +44,7 @@ image_patches = Lambda(
 
 # Build simple convnet
 cnn = Sequential()
-cnn.add(Conv2D(32, (3, 3), activation='relu'))
+cnn.add(Conv2D(128, (3, 3), activation='relu'))
 cnn.add(MaxPooling2D())
 cnn.add(Dropout(0.4))
 cnn.add(Conv2D(64, (3, 3), activation='relu'))
@@ -58,7 +58,7 @@ cnn_out = TimeDistributed(cnn)(image_patches)
 
 # Feed Time distributed into a GRU
 gru_out = Bidirectional(gru_fn(128, return_sequences=True))(cnn_out)
-gru2_out = gru_fn(128, return_sequences=True)(gru_out)
+gru2_out = gru_fn(96, return_sequences=True)(gru_out)
 
 # Convert GRU output to our classes
 softmax_out = Dense(num_classes, activation='softmax',

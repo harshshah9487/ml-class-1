@@ -1,7 +1,7 @@
 # adapted from https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
 import keras
 from keras.models import Sequential
-from keras.layers import LSTM, TimeDistributed, RepeatVector, Dense
+from keras.layers import CuDNNLSTM as LSTM, TimeDistributed, RepeatVector, Dense
 import numpy as np
 import wandb
 from wandb.keras import WandbCallback
@@ -51,10 +51,10 @@ config.batch_size = 128
 
 # Maximum length of input is 'int + int' (e.g., '345+678'). Maximum length of
 # int is DIGITS.
-maxlen = config.digits + 1 + config.digits + 1 + config.digits
+maxlen = config.digits + 3 + config.digits
 
 # All the numbers, plus sign and space for padding.
-chars = '0123456789+- '
+chars = '0123456789+-andor '
 ctable = CharacterTable(chars)
 
 questions = []
@@ -73,13 +73,13 @@ while len(questions) < config.training_size:
     seen.add(key)
     # Pad the data with spaces such that it is always MAXLEN.
     if (np.random.rand() < 0.5):
-        q = '{}-{}+{}'.format(a, b, c)
+        q = '{}and{}'.format(a, b, c)
         query = q + ' ' * (maxlen - len(q))
-        ans = str(a - b + c)
+        ans = str(a + b)
     else:
-        q = '{}+{}-{}'.format(a, b, c)
+        q = '{}or{}'.format(a, b, c)
         query = q + ' ' * (maxlen - len(q))
-        ans = str(a + b - c)
+        ans = str(a - b)
     # Answers can be of maximum size DIGITS + 1.
     ans += ' ' * (config.digits + 1 - len(ans))
 
